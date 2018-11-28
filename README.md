@@ -133,10 +133,10 @@ for (i in 1:Num.Congener)
          nOrtho.Cl[i], Kow.mean[i], Kow.error[i]))
 }
 
-# Example for deployment 1
+# Save resutl (e.g., deployment 1)
 
 final.result = data.frame(colSums(result))
-#write.csv(final.result, file="Results/FMCLMV1.csv")
+#write.csv(final.result, file="Results/FMCLM1.csv")
 
 # Histogram plot
 
