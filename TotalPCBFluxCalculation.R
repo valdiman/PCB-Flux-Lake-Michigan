@@ -185,7 +185,7 @@ final.result = function(MW.PCB, H0.mean, H0.error, Kow.mean, Kow.error,
   T = 298.15
   
   F.PCB.aw <- NULL
-  for (replication in 1:1000) {
+  for (replication in 1:100) {
     
     # random parameters
     
@@ -201,8 +201,8 @@ final.result = function(MW.PCB, H0.mean, H0.error, Kow.mean, Kow.error,
     C.PCB.air <- abs(rnorm(1, C.PCB.air.mean, C.PCB.air.error)) #pg/m3
     DOC <- abs(rnorm(1, 1.5, 0.375)) #mg/L error = 25%
     P <- rnorm(1, P.mean, P.error)
-    T.water <- rnorm(1, twater.mean, twater.error) #C 
-    T.air <- rnorm(1, tair.mean, tair.error) #C
+    T.water <- rnorm(1, T.water.mean, T.water.error) #C 
+    T.air <- rnorm(1, T.air.mean, T.air.error) #C
     # Select sampling period, i.e., 1 to 6
     e <- abs(rnorm(1, e.mean[1], e.error[1]))
     n <- abs(rnorm(1, n.mean[1], n.error[1]))
@@ -273,13 +273,10 @@ result <- NULL
 for (i in 1:Num.Congener) {
   result <- rbind(result,
                   final.result(MW.PCB[i], H0.mean[i], H0.error[i],
-                               C.PCB.water.mean[i],
-                               sum(C.PCB.water.error[i]),
+                               C.PCB.water.mean[i], C.PCB.water.error[i],
                                C.PCB.air.mean[i], C.PCB.air.error[i],
                                nOrtho.Cl[i], Kow.mean[i], Kow.error[i]))
 }
 
 final.result = data.frame(colSums(result))
 
-names(final.result) = c("Congener", "Mean (pg/m2/d)", "Std (pg/m2/d)",
-                        "2.5%CL (pg/m2/d)", "97.5%CL (pg/m2/d)")
