@@ -14,72 +14,62 @@ install.packages('pangaear')
 library(pangaear)
 
 # set a different cache path from the default
-pg_cache$cache_path_set(full_path = "/Users/andres/OneDrive - University of Iowa/work/ISRP/Project4/Old/Codes/PCBFluxesIHSC/PCBFluxesIHSC")
+pg_cache$cache_path_set(full_path = "/Users/andres/OneDrive - University of Iowa/work/ISRP/Project4/Old/Codes/PCBFluxesLM")
 
 # Download the datasets from Pangaea
-data.water <- pg_data(doi = '10.1594/PANGAEA.894906')
-data.air <- pg_data(doi = '10.1594/PANGAEA.894905')
-data.meteo <- pg_data(doi = '10.1594/PANGAEA.894919')
+data.water <- pg_data(doi = '10.1594/PANGAEA.897527')
+data.air <- pg_data(doi = '10.1594/PANGAEA.897526')
+data.meteo <- pg_data(doi = '10.1594/PANGAEA.897532')
 
 # Obtain just concentrations from Pangaea dataset
 pars.water <- data.water[[1]]$data # pg/L
 pars.air <- data.air[[1]]$data # ng/m3
 
 # Extract first deployment time data
-# i.e., 2016-11-23 to 2017-01-24
+# i.e., 2010-09-20T20:00 to 2010-09-21T09:00
 pars.water.2 <- pars.water[1,]
 pars.air.2 <- pars.air[1,]
 
-# Install package to work with data
-install.packages('tidyverse')
-
-# Library
-library(tidyverse)
-
-# Remove individual standard deviation concentrations
-pars.water.3 <- select(pars.water.2, -contains("std"))
-pars.air.3 <- select(pars.air.2, -contains("std"))
-
 # Remove metadata
-pars.water.4 <- subset(pars.water.3,
-                       select = -c(`Method comm (Values = 0 indicates non-dete...)`:`Date/Time (end)`))
-pars.air.4 <- subset(pars.air.3,
-                     select = -c(`Method comm (Values = 0 indicates non-dete...)`:`Date/Time (end)`))
+pars.water.3 <- subset(pars.water.2,
+                       select = -c(`Sample label`:`Date/Time (end)`))
+pars.air.3 <- subset(pars.air.2,
+                     select = -c(`Sample label`:`Date/Time (end)`))
 
 # Obtain just meteorological parameters from Pangaea dataset
 pars.meteo <- data.meteo[[1]]$data # ng/m3
 
 # Extract first deployment time data
-# i.e., 2016-11-23 to 2017-01-24
+# i.e., 
 pars.meteo.2 <- pars.meteo[1,]
 
 # Create P-C properties matrix --------------------------------------------
 
 # Create matrix to storage P-C data
-pars <- data.frame(matrix(NA, nrow = 171, ncol = 5))
+pars <- data.frame(matrix(NA, nrow = 160, ncol = 5))
 
 # Add column names
 colnames(pars) <- c('Congener', 'MW.PCB', 'nOrtho.Cl', 'H0.mean', "H0.error")
 
 # Add PCB names
 pars[,1] <- c('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-              '13', '15', '16', '17', '18+30', '19', '20+28', '21+33',
+              '12+13', '15', '16', '17', '18+30', '19', '20+28', '21+33',
               '22', '23', '24', '25', '26+29', '27', '31', '32', '34',
-              '35', '36', '37', '38', '39', '40+71', '41', '42', '43',
-              '44+47+65', '45', '46', '48', '49+69', '50+53', '51', "52",
+              '35', '36', '37', '38', '39', '40+41+71', '42', '43+73',
+              '44+47+65', '45+51', '46', '48', '49+69', '50+53', '52',
               '54', '55', '56', '57', '58', '59+62+75', '60', '61+70+74+76',
-              '63', '64', '66', '67', '68', '72', '73', '77', '78',
-              '79', '80', '81', '82', '83', '84', '85+116', '86+97+109+119',
-              '88', '89', '90+101+113', '91', '92', '93+100', '94', '95',
-              '96', '87+125', '98', '99', '102', '103', '104', '105',
-              '106', '108', '107+124', '110', '111', '112', '114', '115',
-              '117', '118', '120', '121', '122', '123', '126', '127',
-              '129+138+163', '130', '131', '132', '133', '134', '135+151',
-              '136', '137', '139+140', '141', '143', '142', '144', '145',
-              '146', '147+149', '148', '150', '152', '153+168', '154', '155',
-              '156+157', '158', '159', '160', '161', '162', '164', '165',
-              '167', '169', '170', '171+173', '172', '174', '175', '176', '177',
-              '178', '179', '180+193', '181', '182', '183', '184', '185',
+              '63', '64', '66', '67', '68', '72', '77', '78', '79', '80',
+              '81', '82', '83+99', '84', '85+116+117', '86+87+97+109+119+125',
+              '88+91', '89', '90+101+113', '92', '93+100', '94', '95',
+              '96', '98+102', '103', '104', '105', '106', '108', '107+124',
+              '110+115', '111', '112', '114', '118', '120', '121', '122',
+              '123', '126', '127', '129+138+163', '130', '131', '132',
+              '133', '134+143', '135+151', '136', '137+164', '139+140',
+              '141', '142', '144', '145', '146', '147+149', '148',
+              '150', '152', '153+168', '154', '155', '156+157', '158',
+              '159', '160', '161', '162', '165', '167', '169', '170',
+              '171+173', '172', '174', '175', '176', '177', '178',
+              '179', '180+193', '181', '182', '183', '184', '185',
               '186', '187', '188', '189', '190', '191', '192', '194', '195',
               '196', '197', '198+199', '200', '201', '202', '203', '205',
               '206', '207', '208', '209')
@@ -88,13 +78,13 @@ pars[,1] <- c('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
 pars[1:3,2] <- c(188.644)
 pars[4:13,2] <- c(223.088)
 pars[14:33,2] <- c(257.532)
-pars[34:65,2] <- c(291.976)
-pars[66:102,2] <- c(326.42)
-pars[103:135,2] <- c(360.864)
-pars[136:157,2] <- c(395.308)
-pars[158:167,2] <- c(429.752)
-pars[168:170,2] <- c(465.740544)
-pars[171,2] <- c(498.64)
+pars[34:62,2] <- c(291.976)
+pars[63:93,2] <- c(326.42)
+pars[94:124,2] <- c(360.864)
+pars[125:146,2] <- c(395.308)
+pars[147:156,2] <- c(429.752)
+pars[157:159,2] <- c(465.740544)
+pars[160,2] <- c(498.64)
 
 # Add ortho Cl of individual PCB congeners
 pars[,3] <- c(1,	0,	0,	2,	1,	1,	1,	1,	1,	2,	0,	0,	0,	2,
