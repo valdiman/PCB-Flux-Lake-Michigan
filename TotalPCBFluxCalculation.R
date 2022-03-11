@@ -278,5 +278,13 @@ for (i in 1:Num.Congener) {
                                nOrtho.Cl[i], Kow.mean[i], Kow.error[i]))
 }
 
-final.result = data.frame(colSums(result))
+final.result <- data.frame(colSums(result))
 
+mmm <- mean(final.result$colSums.result.)
+ssss <- sd(final.result$colSums.result.)
+q2.5 <- quantile(final.result$colSums.result., 0.025)
+q97.5 <- quantile(final.result$colSums.result., 0.975)
+
+tPCBFlux <- c(mmm, sss, q2.5, q97.5)
+names(tPCBFlux) <- c("Mean (pg/m2/d)", "Std (pg/m2/d)",
+                     "2.5%CL (pg/m2/d)", "97.5%CL (pg/m2/d)")
