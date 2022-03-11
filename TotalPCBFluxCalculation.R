@@ -185,7 +185,7 @@ final.result = function(MW.PCB, H0.mean, H0.error, Kow.mean, Kow.error,
   T = 298.15
   
   F.PCB.aw <- NULL
-  for (replication in 1:100) {
+  for (replication in 1:100) { # change replication
     
     # random parameters
     
