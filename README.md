@@ -27,3 +27,5 @@ This section of the ReadMe file provides short instructions on how to download a
 2. Click the "download" button beneath RStudio Desktop
 3. Click the button beneath "Download RStudio Desktop".  This will download the correct installation file based on the operating system detected.
 4. Run the installation file and follow on-screen instructions.
+
+
