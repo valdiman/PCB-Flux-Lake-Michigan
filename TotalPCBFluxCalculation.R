@@ -1,8 +1,6 @@
 # Introduction ------------------------------------------------------------
 # This code describes the individual PCB air-water flux calculation for one only
 # deployment time.
-# Change should be done in section Read Pangaea datasets
-# for the others deployment times
 
 # Read Pangaea datasets ---------------------------------------------------
 
@@ -25,10 +23,10 @@ data.meteo <- pg_data(doi = '10.1594/PANGAEA.897532')
 pars.water <- data.water[[1]]$data # pg/L
 pars.air <- data.air[[1]]$data # ng/m3
 
-# Extract first deployment time data
+# Extract first deployment time data, i.e., 1 to 6
 # i.e., 2010-09-20T20:00 to 2010-09-21T09:00
-pars.water.2 <- pars.water[1,]
-pars.air.2 <- pars.air[1,]
+pars.water.2 <- pars.water[1,] # pg/L
+pars.air.2 <- pars.air[1,] # ng/m3
 
 # Remove metadata
 pars.water.3 <- subset(pars.water.2,
@@ -36,10 +34,11 @@ pars.water.3 <- subset(pars.water.2,
 pars.air.3 <- subset(pars.air.2,
                      select = -c(`Sample label`:`Date/Time (end)`))
 
-# Obtain just meteorological parameters from Pangaea dataset
-pars.meteo <- data.meteo[[1]]$data # ng/m3
+# Obtain meteorological parameters from Pangaea dataset
+pars.meteo <- data.meteo[[1]]$data
 
 # Extract data per sampling period
+# from first deployment time data, i.e., 1 to 6
 pars.meteo.s1 <- pars.meteo[1:13,]
 pars.meteo.s2 <- pars.meteo[14:25,]
 pars.meteo.s3 <- pars.meteo[26:37,]
@@ -48,7 +47,8 @@ pars.meteo.s5 <- pars.meteo[50:62,]
 pars.meteo.s6 <- pars.meteo[63:74,]
 
 # Two parameter Weibull distribution
-# Include e and n (mean for each sampling period)
+# See SM from paper for details
+# Include e and n (mean for each sampling period, i.e., 1 to 6)
 e.m <- c(4.2005484, 8.9379, 4.2125, 4.0528, 3.308,
          5.0345)
 e.er <- c(0.8689, 2.1091, 0.82558, 0.895, 0.7223,
@@ -116,7 +116,7 @@ pc[,3] <- c(1, 0, 0, 2, 1, 1, 1, 1, 1, 2, 0, 0, 0, 2,
             3, 4, 1, 2, 2, 2, 1, 3, 3, 4, 3, 4, 4, 4,
             3, 2, 3, 4, 4, 4)
 
-# Add Ho of individual PCB congeners
+# Add log10 Ho of individual PCB congeners
 pc[,4] <- c(-3.526,	-3.544,	-3.562,	-3.483,	-3.622,	-3.486,	-3.424,
             -3.518,	-3.49,	-3.373,	-3.537,	-3.595,	-3.649,	-3.600,
             -3.428,	-3.495,	-3.355,	-3.544,	-3.62,	-3.719,	-3.497,
@@ -144,7 +144,7 @@ pc[,4] <- c(-3.526,	-3.544,	-3.562,	-3.483,	-3.622,	-3.486,	-3.424,
 # Add Ho error
 pc[,5] <- c(0.662)
 
-# Add Kow of individual PCB congeners
+# Add log10 Kow of individual PCB congeners
 pc[,6] <- c(4.46,	4.69,	4.69,	4.65,	4.97,	5.06,	5.07,	5.07,	5.06,	4.84,
             5.28,	5.29,	5.3,	5.16,	5.25,	5.24,	5.02,	5.67,	5.60,	5.58,
             5.57,	5.35,	5.67,	5.66,	5.44,	5.67,	5.44,	5.66,	5.82,	5.88,
@@ -175,11 +175,11 @@ final.result = function(MW.PCB, H0.mean, H0.error,
   # fixed parameters
   
   R = 8.3144
-  T = 298.15
+  T = 298.15 # K
   
   F.PCB.aw <- NULL
-  for (replication in 1:100)
-    { # change replication
+  for (replication in 1:100) # change replication
+    { 
     
     # random parameters
     
@@ -193,12 +193,12 @@ final.result = function(MW.PCB, H0.mean, H0.error,
     Kow <- rnorm(1, Kow.mean, Kow.error)
     P <- rnorm(1, P.mean, P.error)
     T.water <- rnorm(1, T.water.mean, T.water.error) # C 
-    T.air <- rnorm(1, T.air.mean, T.air.error) #C
+    T.air <- rnorm(1, T.air.mean, T.air.error) # C
     e <- abs(rnorm(1, e.mean, e.error))
     n <- abs(rnorm(1, n.mean, n.error))
     u <- rweibull(1, shape = e, scale = n) # m/s
     C.PCB.water <- abs(rnorm(1, C.PCB.water.mean, C.PCB.water.error)) # ng/m3
-    C.PCB.air <- abs(rnorm(1, C.PCB.air.mean, C.PCB.air.error)) #pg/m3
+    C.PCB.air <- abs(rnorm(1, C.PCB.air.mean, C.PCB.air.error)) # pg/m3
     DOC <- abs(rnorm(1, 1.5, 0.375)) # mg/L error = 25%
     
     # computed values
@@ -269,8 +269,6 @@ T.air.mean <- mean(pars.meteo.s1$`TTT [°C]`)
 T.air.error <- sd(pars.meteo.s1$`TTT [°C]`)
 T.water.mean <- mean(pars.meteo.s1$`Temp [°C]`)
 T.water.error <- sd(pars.meteo.s1$`Temp [°C]`)
-#u.mean <- mean(pars.meteo.s1$`ff [m/s]`)
-#u.error <- sd(pars.meteo.s1$`ff [m/s]`)
 P.mean <- mean(pars.meteo.s1$`PPPP [hPa]`)
 P.error <- sd(pars.meteo.s1$`PPPP [hPa]`)
 # Select sampling period, i.e., 1 to 6
@@ -280,6 +278,7 @@ n.mean <- n.m[1]
 n.error <- n.er[1]
 
 # Final calculations ------------------------------------------------------
+# Per individual congeners
 
 Num.Congener <- length(Congener)
 
@@ -292,8 +291,10 @@ for (i in 1:Num.Congener) {
                                nOrtho.Cl[i], Kow.mean[i], Kow.error[i]))
 }
 
+# Sum of all congeners per repetition
 final.result <- data.frame(colSums(result))
 
+# Summary of the total PCBs
 mmm <- mean(final.result$colSums.result.)
 sss <- sd(final.result$colSums.result.)
 q2.5 <- quantile(final.result$colSums.result., 0.025)
