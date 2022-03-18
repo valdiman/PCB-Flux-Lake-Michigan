@@ -28,4 +28,7 @@ This section of the ReadMe file provides short instructions on how to download a
 3. Click the button beneath "Download RStudio Desktop".  This will download the correct installation file based on the operating system detected.
 4. Run the installation file and follow on-screen instructions.
 
+# Notes
+
+To select sampling periods, changes should be performed in lines 26-29 for the air and water concentrations, and lines 40 - 47 for the meteorological parameters, as well as in lines 267 - 273 (i.e., s1 to s6). Further, change will also need to be perform in lines 274 - 278 for selecting the correct Weibull distribution parameters, i.e., e and n.
 
